@@ -1,7 +1,9 @@
 
 const button = document.querySelector("#get-quotes")
+const randomButton = document.querySelector("#get-random-quote")
 
 button.addEventListener('click', getQuotes)
+randomButton.addEventListener('click', getRandomQuote)
 
 function getQuotes(e) {
     e.preventDefault();
@@ -11,7 +13,6 @@ function getQuotes(e) {
     https.onload = function() {
         if (this.status === 200) {
             let data = JSON.parse(this.responseText)
-            console.log(data)
             let output = "";
             data.forEach((quote) => {
                 output += `
@@ -19,6 +20,27 @@ function getQuotes(e) {
                 <hr />
                 `
             })
+            document.querySelector(".quotes").innerHTML = output;
+        }
+    }
+    https.send();
+}
+
+function getRandomQuote(e) {
+    e.preventDefault();
+    const randomNumber = Math.floor(Math.random() * 1643)
+    console.log(randomNumber)
+    const https = new XMLHttpRequest();
+    https.open("GET", "https://type.fit/api/quotes", true);
+    https.onload = function() {
+        if (this.status === 200) {
+            let data = JSON.parse(this.responseText)
+            let quote = data[randomNumber]
+            let output = `
+                <li>"${quote.text}" - ${quote.author} </li>
+                <hr />
+            `;
+
             document.querySelector(".quotes").innerHTML = output;
         }
     }
