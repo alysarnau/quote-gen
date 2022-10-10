@@ -15,7 +15,7 @@ function getQuotes(e) {
             })
             .then((data) => {
                 data = shuffle((data))
-                let output = "";
+                let output = `<hr>`;
                 for (let i = 0; i < data.length; i++) {
                     if (i == number) {break;}
                     console.log('quote: ', data[i])
