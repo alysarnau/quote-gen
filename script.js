@@ -1,32 +1,34 @@
 
 const button = document.querySelector("#get-quotes")
 const randomButton = document.querySelector("#get-random-quote")
-
 button.addEventListener('click', getQuotes)
 randomButton.addEventListener('click', getRandomQuote)
+const apiURL = 'https://type.fit/api/quotes'
 
 function getQuotes(e) {
     e.preventDefault();
     const number = document.querySelector("#number").value
     if (number && number > 0) {
-        const https = new XMLHttpRequest();
-        https.open("GET", "https://type.fit/api/quotes", true);
-        https.onload = function() {
-            if (this.status === 200) {
-                let data = JSON.parse(this.responseText)
-                shuffle(data)
+        fetch(apiURL)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                data = shuffle((data))
                 let output = "";
                 for (let i = 0; i < data.length; i++) {
                     if (i == number) {break;}
+                    console.log('quote: ', data[i])
                     output += `
-                        <li>"${data[i].text}" - ${data[i].author} </li>
+                        <li>"${data[i].text}" -<em>${data[i].author}</em> </li>
                         <hr />
                         ` 
                 }
                 document.querySelector(".quotes").innerHTML = output;
-            }
-        }
-        https.send();
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     } else {
         return alert('Please enter a number.')
     }
@@ -34,22 +36,21 @@ function getQuotes(e) {
 
 function getRandomQuote(e) {
     e.preventDefault();
-    const randomNumber = Math.floor(Math.random() * 1643)
-    const https = new XMLHttpRequest();
-    https.open("GET", "https://type.fit/api/quotes", true);
-    https.onload = function() {
-        if (this.status === 200) {
-            let data = JSON.parse(this.responseText)
-            let quote = data[randomNumber]
-            let output = `
-                <li>"${quote.text}" - ${quote.author} </li>
-                <hr />
-            `;
-
-            document.querySelector(".quotes").innerHTML = output;
-        }
-    }
-    https.send();
+    fetch(apiURL)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                data = shuffle((data))
+                let output = `
+                        <li>"${data[0].text}" -<em>${data[0].author}</em> </li>
+                        <hr />
+                        ` 
+                document.querySelector(".quotes").innerHTML = output;
+                })
+            .catch((error) => {
+                console.log(error)
+            })
 }
 
 // Fisher-Yates Shuffle
